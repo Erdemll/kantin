@@ -88,6 +88,7 @@ class OgrenciController extends Controller
         if ($ogrenci) {
             return response()->json([
                 'success' => true,
+                'id' => $ogrenci->id,
                 'ad_soyad' => $ogrenci->adsoyad,
                 'bakiye' => $ogrenci->bakiye
             ]);

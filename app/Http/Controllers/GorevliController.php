@@ -25,6 +25,26 @@ class GorevliController extends Controller
             return redirect('/')->with('error', 'Kullanıcı adınız yanlış.');
     }
 
+    public function gorevli_ekle(Request $request)
+    {
+        try {
+            $kayit = new Gorevli();
+            $kayit->kullanici_adi = $request->input('kullanici_adi');
+            $kayit->sifre = Hash::make('123456');
+            $kayit->save();
+
+            return redirect('/gorevliler')->with('create', 'ok');
+        } catch (\Throwable $th) {
+            return redirect('/gorevliler')->with('create', $th->getMessage());
+        }
+    }
+
+    public function gorevliler_sayfa()
+    {
+        $gorevliler = Gorevli::all();
+        return view('gorevliler', ['gorevliler' => $gorevliler]);
+    }
+
     public function cikis_yap(Request $request)
     {
         $request->session()->flush();

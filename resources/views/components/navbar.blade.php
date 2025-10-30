@@ -33,6 +33,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/bakiye_gecmisi">Bakiye Yükleme Geçmişi</a>
           </li>
+          <li class="nav_item">
+            <a href="/cikis_yap" class="nav-link text-danger">Çıkış Yap</a>
+          </li>
         </ul>
       </div>
     </div>

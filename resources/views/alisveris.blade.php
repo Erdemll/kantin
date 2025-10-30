@@ -53,28 +53,28 @@
           <h2>Öğrenci Bilgileri</h2>
         </div>
         <div class="col-12 col-md-8 fs-4 mt-3">
-          Ad Soyad: <span id="ogrenci_adsoyad"></span>
+          <span id="ogrenci_adsoyad">-</span>
         </div>
         <div class="col-12 col-md-4 fs-4 mt-3">
-          Bakiye: <span id="ogrenci_bakiye"></span>TL
+          Bakiye: <span id="ogrenci_bakiye">-</span>
         </div>
       </div>
 
       <div class="col-12 col-md-7 mt-5">
         <h2>Ürünler</h2>
         @foreach ($kategoriler as $kategori)
-          <div class="mt-4">
-            <h3>{{ $kategori->ad }}</h3>
-          </div>
-          <div id="{{ strtolower($kategori->isim) }}" class="col-12 d-flex flex-wrap">
-            @foreach ($kategori->urunler as $urun)
-             @if($urun->mevcut == 1)
-              <button onclick="urun_ekle('{{ json_encode($urun) }}')" class="btn btn-primary m-2">
-                <p>{{ $urun->ad }}</p> <span>{{ $urun->fiyat }}TL</span>
-              </button>
-             @endif
-            @endforeach
-          </div>
+          @if ($kategori->urunler->count() > 0)
+            <div class="mt-4">
+              <h3>{{ $kategori->ad }}</h3>
+            </div>
+            <div id="{{ strtolower($kategori->isim) }}" class="col-12 d-flex flex-wrap">
+              @foreach ($kategori->urunler as $urun)
+                <button onclick="urun_ekle('{{ json_encode($urun) }}')" class="btn btn-primary m-2">
+                  <p>{{ $urun->ad }}</p> <span>{{ $urun->fiyat }}TL</span>
+                </button>
+              @endforeach
+            </div>
+          @endif
         @endforeach
       </div>
 
@@ -114,6 +114,9 @@
     var sepet_satir = 0;
     var sepet_tutari = 0;
 
+    var ogrenci_id = document.getElementById("ogrenci_id");
+    var vekalet_id = document.getElementById("vekalet_id");
+
     function ogrenci_getir() {
       let id = document.getElementById("ogrenci_id").value;
       if (id === "" || isNaN(id)) {
@@ -132,9 +135,14 @@
         dataType: 'json',
         success: function (data) {
           if (data.success) {
-            $('#ogrenci_adsoyad').text(data.ad_soyad);
-            $('#ogrenci_bakiye').text(data.bakiye);
-            document.getElementById("yukleme_button").disabled = false;
+            $('#ogrenci_adsoyad').text(data.id + " - " + data.ad_soyad);
+            $('#ogrenci_bakiye').text(data.bakiye + ' TL');
+            if (data.bakiye > 0) {
+              $('#ogrenci_bakiye').css('color', 'green');
+            }
+            else {
+              $('#ogrenci_bakiye').css('color', 'red');
+            }
           }
           else {
             alert(data.message);
@@ -187,6 +195,18 @@
       });
     }
 
+    document.getElementById('ogrenci_id').addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') {
+        ogrenci_getir();
+      }
+    });
+
+    document.getElementById('bakiye').addEventListener('keypress', function (event) {
+      if (event.key === 'Enter') {
+        bakiye_yukle();
+      }
+    });
+
     function urun_ekle(urun) {
       urun = JSON.parse(urun);
       urunler.push(urun.id);
@@ -220,9 +240,6 @@
     }
 
     function satis_yap() {
-      let ogrenci_id = document.getElementById("ogrenci_id").value;
-      let vekalet_id = document.getElementById("vekalet_id").value;
-
       if (urunler.length === 0) {
         alert("Lütfen sepete ürün ekleyiniz.");
         return;
@@ -235,8 +252,8 @@
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         data: {
-          ogrenci_id: ogrenci_id,
-          vekalet_id: vekalet_id,
+          ogrenci_id: ogrenci_id.value,
+          vekalet_id: vekalet_id.value,
           urunler: urunler,
         },
         dataType: 'json',
@@ -244,7 +261,10 @@
           if (data.satis) {
             alert("Satış başarıyla gerçekleştirildi.");
             sepet_temizle();
-            $('#ogrenci_bakiye').text(data.yeni_bakiye);
+            ogrenci_id.value = "";
+            vekalet_id.value = "";
+            $('#ogrenci_adsoyad').text('-');
+            $('#ogrenci_bakiye').text('-');
             return;
           }
           else {

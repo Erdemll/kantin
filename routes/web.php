@@ -53,9 +53,13 @@ Route::middleware(Gorevli_Kontrol::class)->group(function () {
 
     Route::get('/satis_gecmisi', [AlisverisController::class, 'satis_gecmisi_sayfa']);
     Route::get('/satis_gecmisi/{id}', [AlisverisController::class, 'satis_gecmisi_detay']);
+    Route::get('/iade_et/{satis_id}', [AlisverisController::class, 'iade']);
 
     Route::get('/bakiye_gecmisi', [AlisverisController::class, 'bakiye_gecmisi_sayfa']);
     Route::get('/bakiye_gecmisi/{id}', [AlisverisController::class, 'bakiye_gecmisi_detay']);
+
+    Route::get('/gorevliler', [GorevliController::class, 'gorevliler_sayfa']);
+    Route::post('/gorevli_ekle', [GorevliController::class, 'gorevli_ekle']);
 
     Route::get('/exel_deneme', function () {
         return view('exel_deneme');

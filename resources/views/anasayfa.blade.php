@@ -35,7 +35,7 @@
         <a href="/urunler" class="btn btn-danger">
           Ürünler
         </a>
-        <a href="/Kategoriler" class="btn btn-warning">
+        <a href="/kategoriler" class="btn btn-warning">
           Kategoriler
         </a>
         <a href="/satis_gecmisi" class="btn btn-info">

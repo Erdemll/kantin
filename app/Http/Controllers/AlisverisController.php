@@ -111,4 +111,28 @@ class AlisverisController extends Controller
         }
     }
 
+    public function iade($satis_id)
+    {
+        try {
+            $satis = SatisGecmisi::find($satis_id);
+            if (!$satis) {
+                return redirect('/satis_gecmisi')->with('iade', false)->with('error', 'Satış kaydı bulunamadı.');
+            }
+
+            $ogrenci = Ogrenci::find($satis->alan_id);
+            if (!$ogrenci) {
+                return redirect('/satis_gecmisi')->with('iade', false)->with('error', 'Öğrenci bulunamadı.');
+            }
+
+            $ogrenci->bakiye += $satis->tutar;
+            $ogrenci->save();
+
+            $satis->delete();
+
+            return redirect('/satis_gecmisi')->with('iade', true)->with('success', 'İade işlemi başarılı. Yeni bakiye: ' . $ogrenci->bakiye);
+        } catch (\Throwable $th) {
+            return redirect('/satis_gecmisi')->with('iade', false)->with('error', 'İade işlemi sırasında bir hata oluştu: ' . $th->getMessage());
+        }
+    }
+
 }

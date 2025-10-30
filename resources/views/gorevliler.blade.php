@@ -17,7 +17,7 @@
   {{-- Öğrenciler --}}
   <div class="col-12 d-flex justify-content-center align-items-center mb-4" style="margin-top: 100px;">
     <div class="col-11">
-      <h1>Satış Geçmişi</h1>
+      <h1>Görevliler</h1>
     </div>
   </div>
   <div class="col-12 d-flex justify-content-center align-items-center mb-4">
@@ -56,44 +56,33 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         @endif
-        @if(session()->has('iade') && session('iade') == false)
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        @elseif(session()->has('iade') && session('iade') == true)
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        @endif
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" data-bs-toggle="modal" data-bs-target="#ogrenci_ekleme_modal"
+            class="btn btn-primary">Öğrenci Ekle</button>
+          <button type="button" data-bs-toggle="modal" data-bs-target="#exel_ekleme_modal"
+            class="btn btn-success ms-2">Exel'den Aktar</button>
+        </div>
         <div style="overflow: auto;" class="col-12">
           <table class="table table-striped table-hover">
             <thead>
               <tr>
                 <th scope="col">No</th>
-                <th scope="col">Alan Ad Soyad</th>
-                <th scope="col">Satan Kullanıcı Adı</th>
-                <th scope="col">Vekalet Ad Soyad</th>
-                <th scope="col">Ürün Ad</th>
-                <th scope="col">Ürün Fiyat</th>
-                <th scope="col">Tarih</th>
-                <th scope="col">İade</th>
+                <th scope="col">Kullanıcı Adı</th>
+                <th scope="col">İşlemler</th>
               </tr>
             </thead>
             <tbody>
-              @foreach($satislar as $satis)
+              @foreach($gorevliler as $gorevli)
                 <tr>
-                  <th scope="row">{{ $satis->id }}</th>
-                  <td><a href="/satis_gecmisi/{{ $satis->ogrenci->id }}"
-                      class="text-secondary link-offset-2 link-underline link-underline-opacity-25">{{ $satis->ogrenci->adsoyad ?? ''}}</a>
+                  <th scope="row">{{ $gorevli->id }}</th>
+                  <td>{{ $gorevli->kullanici_adi }}</td>
+                  <td><button type="button" data-bs-toggle="modal" data-bs-target="#ogrenci_duzenleme_modal"
+                      class="btn btn-warning"
+                      onclick="duzenleme_modal('{{ $ogrenci->id }}', '{{ $ogrenci->adsoyad }}')">Düzenle</button>
+                    <a href="/sifre_sifirla/{{ $gorevli->id }}"></a>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#ogrenci_silme_modal"
+                      class="btn btn-danger" onclick="silme_modal('{{ $ogrenci->id }}')">Sil</button>
                   </td>
-                  <td>{{ $satis->gorevli->kullanici_adi ?? ''}}</td>
-                  <td>{{ $satis->vekalet->adsoyad ?? '' }}</td>
-                  <td>{{ $satis->urun->ad }}</td>
-                  <td>{{ $satis->urun->fiyat }}</td>
-                  <td>{{ $satis->created_at }}</td>
-                  <td><a href="/iade_et/{{ $satis->id }}" class="btn btn-danger">İade Et</a></td>
                 </tr>
               @endforeach
             </tbody>
@@ -117,6 +106,31 @@
             <input class="form-control mb-3 mt-2" type="text" name="id" id="id">
             <label for="adsoyad">Ad Soyad</label>
             <input class="form-control mt-2" type="text" name="adsoyad" id="adsoyad">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+            <input type="submit" class="btn btn-success" value="Kaydet">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="exel_ekleme_modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="ModalLabel">Exel Dosyası Seç</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="/exel_exle" method="post" enctype="multipart/form-data">
+          @csrf
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="excel_file" class="form-label">Exel dosyasını seçiniz.</label>
+              <input class="form-control" type="file" id="excel_file" name="excel_file"
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>

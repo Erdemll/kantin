@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use function Adminer\where;
 
 class Kategori extends Model
 {
@@ -14,6 +15,6 @@ class Kategori extends Model
 
     public function urunler()
     {
-        return $this->hasMany(Urun::class, 'kategori_id');
+        return $this->hasMany(Urun::class, 'kategori_id')->where('mevcut', 1);
     }
 }
