@@ -137,6 +137,7 @@
           if (data.success) {
             $('#ogrenci_adsoyad').text(data.id + " - " + data.ad_soyad);
             $('#ogrenci_bakiye').text(data.bakiye + ' TL');
+            $('#yukleme_button').prop('disabled', false);
             if (data.bakiye > 0) {
               $('#ogrenci_bakiye').css('color', 'green');
             }
